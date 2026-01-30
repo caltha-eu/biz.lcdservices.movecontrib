@@ -27,6 +27,19 @@ class CRM_LCD_MoveContrib_BAO_MoveContrib {
       1 => [$params['change_contact_id'], 'Positive'],
       2 => [$params['contribution_id'], 'Positive'],
     ]);
+    
+    // Update the soft credit items' contact IDs as well. Single > Household
+    $sql = "
+      UPDATE civicrm_contribution_soft 
+      SET contact_id = %1 
+      WHERE contribution_id = %2
+      AND contact_id = %3;
+    ";
+    CRM_Core_DAO::executeQuery($sql, [
+      1 => [$params['current_contact_id'], 'Positive'],
+      2 => [$params['contribution_id'], 'Positive'],
+      3 => [$params['change_contact_id'], 'Positive'],
+    ]);
 
     // record activity for moving contribution
     if ($contribution) {
